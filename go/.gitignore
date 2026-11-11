@@ -1,3 +1,9 @@
-**/bin
-**/bild
-**/dist
+# Build artifacts
+**/bin/
+**/build/
+**/dist/
+
+# Go binaries and test artifacts
+*.exe
+*.test
+*.out
