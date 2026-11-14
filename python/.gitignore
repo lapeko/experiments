@@ -1,0 +1,58 @@
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+pip-wheel-metadata/
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# Type checking / linting
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Python tooling
+.python-version
+
