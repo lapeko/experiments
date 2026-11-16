@@ -26,20 +26,16 @@ func calcSumConcurently(slice []int64, workersCount int64) int64 {
 		return sliceSum(slice)
 	}
 	sum := atomic.Int64{}
+	size := int64(len(slice))
 	var wg sync.WaitGroup
-	size := len(slice)
-	blockSize := float64(size) / float64(workersCount)
 
-	prevIdx := 0
 	for i := range workersCount {
-		idx := int(blockSize * float64(i+1))
-		pIdx := prevIdx
+		start := i * size / workersCount
+		end := (i + 1) * size / workersCount
 
 		wg.Go(func() {
-			sum.Add(sliceSum(slice[pIdx:idx]))
+			sum.Add(sliceSum(slice[start:end]))
 		})
-
-		prevIdx = idx
 	}
 
 	wg.Wait()
