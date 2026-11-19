@@ -36,16 +36,18 @@ func validateHandler(res http.ResponseWriter, req *http.Request) {
 	var report string
 
 	for _, m := range messagesReq.Messages {
-		matched, err := regexp.MatchString(emailRegexPattern, m)
-		if err != nil {
-			continue
-		}
-
 		cleanMsg := m
-		if matched {
-			re, err := regexp.Compile(emailRegexPattern)
-			if err == nil {
-				cleanMsg = re.ReplaceAllString(m, "***")
+		for range 100 {
+			matched, err := regexp.MatchString(emailRegexPattern, m)
+			if err != nil {
+				continue
+			}
+
+			if matched {
+				re, err := regexp.Compile(emailRegexPattern)
+				if err == nil {
+					cleanMsg = re.ReplaceAllString(m, "***")
+				}
 			}
 		}
 
