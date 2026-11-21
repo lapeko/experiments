@@ -10,28 +10,28 @@ resource "aws_vpc" "vpc_main" {
 }
 
 resource "aws_subnet" "subnet_public" {
-  for_each = var.public_subnets
+  count = length(var.public_subnets)
 
   vpc_id                  = aws_vpc.vpc_main.id
-  cidr_block              = each.value.cidr
-  availability_zone       = each.value.az
+  cidr_block              = var.public_subnets[count.index].cidr
+  availability_zone       = var.public_subnets[count.index].az
   map_public_ip_on_launch = true
 
   tags = {
-    Name                     = "${var.env}-public-${each.key}"
+    Name                     = "${var.env}-public-${count.index + 1}"
     "kubernetes.io/role/elb" = "1"
   }
 }
 
 resource "aws_subnet" "subnet_private" {
-  for_each = var.private_subnets
+  count = length(var.private_subnets)
 
   vpc_id            = aws_vpc.vpc_main.id
-  cidr_block        = each.value.cidr
-  availability_zone = each.value.az
+  cidr_block        = var.private_subnets[count.index].cidr
+  availability_zone = var.private_subnets[count.index].az
 
   tags = {
-    Name                              = "${var.env}-private-${each.key}"
+    Name                              = "${var.env}-private-${count.index + 1}"
     "kubernetes.io/role/internal-elb" = "1"
     "karpenter.sh/discovery"          = "${var.env}-${var.cluster_name}"
   }
@@ -57,7 +57,7 @@ resource "aws_eip" "eip_nat" {
 
 resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = aws_eip.eip_nat.id
-  subnet_id     = values(aws_subnet.subnet_public)[0].id
+  subnet_id     = aws_subnet.subnet_public[0].id
 
   tags = {
     Name = "${var.env}-nat-gateway"
@@ -78,8 +78,8 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  for_each       = aws_subnet.subnet_public
-  subnet_id      = each.value.id
+  count          = length(aws_subnet.subnet_public)
+  subnet_id      = aws_subnet.subnet_public[count.index].id
   route_table_id = aws_route_table.public.id
 }
 
@@ -97,7 +97,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  for_each       = aws_subnet.subnet_private
-  subnet_id      = each.value.id
+  count          = length(aws_subnet.subnet_private)
+  subnet_id      = aws_subnet.subnet_private[count.index].id
   route_table_id = aws_route_table.private.id
 }
